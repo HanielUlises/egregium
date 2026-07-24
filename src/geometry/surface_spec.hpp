@@ -36,8 +36,13 @@ struct SurfaceFormulas {
     // shared by Parametric/Metric (Explicit converts internally to this too)
     double uMin = 0, uMax = 1, vMin = 0, vMax = 1;
     bool periodicU = false, periodicV = false;
+    // See TessellationParams::periodicUTwistV: for immersions like the Klein
+    // bottle where u=uMax identifies with u=uMin under v -> -v instead of a
+    // plain repeat. Requires periodicV; takes precedence over periodicU.
+    bool periodicUTwistV = false;
     int resolutionU = 80, resolutionV = 80;
     bool colorByCurvature = false;
+    bool curvatureHeatmap = false; // when colorByCurvature: sequential heatmap of |K| instead of the diverging signed map
 
     float colorR = 0.55f, colorG = 0.65f, colorB = 0.85f;
 };

@@ -6,7 +6,8 @@ namespace geo {
 
 Mesh tessellate(const DiffGeoSurface& surf, const TessellationParams& p) {
     Mesh mesh;
-    int uCount = p.periodicU ? p.uSegments : p.uSegments + 1;
+    bool uWraps = p.periodicU || p.periodicUTwistV;
+    int uCount = uWraps ? p.uSegments : p.uSegments + 1;
     int vCount = p.periodicV ? p.vSegments : p.vSegments + 1;
     uCount = std::max(uCount, 2);
     vCount = std::max(vCount, 2);
@@ -51,18 +52,48 @@ Mesh tessellate(const DiffGeoSurface& surf, const TessellationParams& p) {
         mesh.scalarMax = scalarMax;
     }
 
-    int uQuadRows = p.periodicU ? uCount : uCount - 1;
+    // For a twisted wrap, row 0's OWN vertices can't be reused as the seam's
+    // "next ring": renderPosition(uMax,v) == renderPosition(uMin,-v) holds,
+    // but the analogous identity for the normal is renderNormal(uMax,v) ==
+    // -renderNormal(uMin,-v) -- differentiating the shared-point identity
+    // w.r.t. v flips the sign of Xv (and hence of Xu x Xv) under v -> -v,
+    // while Xu itself is unchanged. That sign flip is real, not a bug: it's
+    // the Klein bottle's non-orientability showing up directly in the
+    // formulas (there is no continuous, consistent normal field to compute).
+    // Reusing row 0's vertices as-is would linearly blend that flipped
+    // normal against row (uCount-1)'s correctly-facing one across each seam
+    // triangle, producing spiky lit/unlit interpolation garbage. Duplicating
+    // row 0 here with negated normals (same positions and curvature scalar,
+    // which don't have this sign ambiguity) instead gives every seam
+    // triangle a consistent orientation, so the identification shows up
+    // honestly as a sharp lighting crease rather than as noise.
+    size_t twistRowOffset = mesh.vertices.size();
+    if (p.periodicUTwistV) {
+        for (int j = 0; j < vCount; ++j) {
+            int jm = (vCount - j) % vCount;
+            Vertex dup = mesh.vertices[static_cast<size_t>(jm)]; // row 0
+            dup.nx = -dup.nx; dup.ny = -dup.ny; dup.nz = -dup.nz;
+            mesh.vertices.push_back(dup);
+        }
+    }
+
+    int uQuadRows = uWraps ? uCount : uCount - 1;
     int vQuadCols = p.periodicV ? vCount : vCount - 1;
     mesh.indices.reserve(static_cast<size_t>(uQuadRows) * vQuadCols * 6);
 
     for (int i = 0; i < uQuadRows; ++i) {
         int i2 = (i + 1) % uCount;
+        // Only the wraparound edge (last ring back to the first) needs the
+        // twist; every other strip connects row i to row i+1 straightforwardly.
+        bool twistEdge = p.periodicUTwistV && i2 == 0;
         for (int j = 0; j < vQuadCols; ++j) {
             int j2 = (j + 1) % vCount;
             uint32_t a = static_cast<uint32_t>(i * vCount + j);
-            uint32_t b = static_cast<uint32_t>(i2 * vCount + j);
-            uint32_t c = static_cast<uint32_t>(i2 * vCount + j2);
             uint32_t dd = static_cast<uint32_t>(i * vCount + j2);
+            uint32_t b = twistEdge ? static_cast<uint32_t>(twistRowOffset + static_cast<size_t>(j))
+                                    : static_cast<uint32_t>(i2 * vCount + j);
+            uint32_t c = twistEdge ? static_cast<uint32_t>(twistRowOffset + static_cast<size_t>(j2))
+                                    : static_cast<uint32_t>(i2 * vCount + j2);
             mesh.indices.push_back(a);
             mesh.indices.push_back(b);
             mesh.indices.push_back(c);

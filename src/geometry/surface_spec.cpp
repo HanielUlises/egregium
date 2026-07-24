@@ -49,6 +49,7 @@ TessellationParams makeParams(const SurfaceFormulas& f, double uMin, double uMax
     tp.vSegments = f.resolutionV;
     tp.periodicU = periodicU;
     tp.periodicV = periodicV;
+    tp.periodicUTwistV = f.periodicUTwistV;
     tp.colorByCurvature = f.colorByCurvature;
     return tp;
 }

@@ -75,10 +75,10 @@ std::vector<DemoEntry> builtinDemos() {
         e.formulas.yFormula = "(2.5 + cos(u/2)*sin(v) - sin(u/2)*sin(2*v))*sin(u)";
         e.formulas.zFormula = "sin(u/2)*sin(v) + cos(u/2)*sin(2*v)";
         e.formulas.uMin = 0; e.formulas.uMax = 2 * M_PI; e.formulas.vMin = 0; e.formulas.vMax = 2 * M_PI;
-        // periodicV is exactly correct. periodicU is NOT: going around u by 2*pi
-        // maps v -> -v (the "twist"), which plain wraparound can't express, so a
-        // thin seam is visible at u=0/u=2*pi. Known, documented simplification.
-        e.formulas.periodicU = false; e.formulas.periodicV = true;
+        // Going around u by 2*pi maps v -> -v (the half-angle "twist"), which a
+        // plain periodicU wraparound can't express -- periodicUTwistV mirrors
+        // the v index at the seam instead, closing the mesh with no gap.
+        e.formulas.periodicU = false; e.formulas.periodicV = true; e.formulas.periodicUTwistV = true;
         e.formulas.resolutionU = 100; e.formulas.resolutionV = 60;
         demos.push_back(e);
     }
