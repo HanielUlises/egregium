@@ -1,5 +1,9 @@
 # egregium
 
+[![Release](https://img.shields.io/github/v/release/HanielUlises/egregium?include_prereleases)](https://github.com/HanielUlises/egregium/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Top language](https://img.shields.io/github/languages/top/HanielUlises/egregium)](https://github.com/HanielUlises/egregium)
+
 Interactive visualization of surfaces and manifolds in differential geometry.
 A surface is specified by a formula and rendered in three dimensions together
 with its Gaussian curvature $K$ and its geodesics, both obtained by exact
@@ -49,7 +53,7 @@ The grammar admits the arithmetic operators $+,\ -,\ \times,\ \div,\ {}^\wedge$
 with standard precedence and unary $\pm$; the constants $\pi$ and $e$; and
 the functions
 
-$$\sin,\ \cos,\ \tan,\ \arcsin,\ \arccos,\ \arctan,\ \operatorname{atan2},\ \sinh,\ \cosh,\ \tanh,\ \exp,\ \log,\ \sqrt{\cdot\,},\ |\cdot|,\ \lfloor\cdot\rfloor,\ \min,\ \max,\ (\cdot)^{(\cdot)}$$
+$$\sin,\ \cos,\ \tan,\ \arcsin,\ \arccos,\ \arctan,\ \mathrm{atan2},\ \sinh,\ \cosh,\ \tanh,\ \exp,\ \log,\ \sqrt{\cdot\,},\ |\cdot|,\ \lfloor\cdot\rfloor,\ \min,\ \max,\ (\cdot)^{(\cdot)}$$
 
 $\min$ and $\max$ are admissible inside an implicit formula $F(x,y,z)=0$,
 which is raymarched and never differentiated, but are rejected in a height
