@@ -2,7 +2,6 @@
 
 [![Release](https://img.shields.io/github/v/release/HanielUlises/egregium?include_prereleases)](https://github.com/HanielUlises/egregium/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Top language](https://img.shields.io/github/languages/top/HanielUlises/egregium)](https://github.com/HanielUlises/egregium)
 
 Interactive visualization of surfaces and manifolds in differential geometry.
 A surface is specified by a formula and rendered in three dimensions together
