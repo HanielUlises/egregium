@@ -23,6 +23,12 @@ void Camera::pan(float dxNdc, float dyNdc) {
     target_ += (-dxNdc * right + dyNdc * up) * speed;
 }
 
+void Camera::setView(float yawDeg, float pitchDeg, float distance) {
+    yawDeg_ = yawDeg;
+    pitchDeg_ = std::clamp(pitchDeg, -89.0f, 89.0f);
+    distance_ = std::clamp(distance, 0.3f, 80.0f);
+}
+
 void Camera::reset() {
     yawDeg_ = -50.0f;
     pitchDeg_ = 22.0f;

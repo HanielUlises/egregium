@@ -10,6 +10,9 @@ public:
     void pan(float dxNdc, float dyNdc);
     void zoom(float scrollDelta);
     void reset();
+    // Absolute placement (vs. the incremental orbit/zoom above), for
+    // reproducible framing -- e.g. scripted screenshot capture.
+    void setView(float yawDeg, float pitchDeg, float distance);
 
     glm::mat4 viewMatrix() const;
     glm::mat4 projectionMatrix(float aspect) const;

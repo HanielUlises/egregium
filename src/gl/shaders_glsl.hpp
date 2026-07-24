@@ -40,7 +40,8 @@ out vec4 FragColor;
 
 uniform vec3 uBaseColor;
 uniform vec3 uCameraPos;
-uniform bool uUseCurvatureColor;
+// 0 = flat uBaseColor, 1 = diverging (signed) curvature colormap, 2 = sequential heatmap of |curvature|
+uniform int uColorMode;
 uniform float uScalarAbsMax;
 uniform bool uFlatColorMode;
 uniform vec3 uFlatColor;
@@ -53,6 +54,22 @@ vec3 divergingColormap(float t) {
     return t < 0.0 ? mix(mid, neg, -t) : mix(mid, pos, t);
 }
 
+// Classic black -> red -> orange -> yellow -> white "heat" ramp. Unlike the
+// diverging map above (which encodes the SIGN of curvature), this encodes
+// only MAGNITUDE -- t is expected already-unsigned (e.g. |curvature|/max).
+vec3 heatmapColormap(float t) {
+    t = clamp(t, 0.0, 1.0);
+    vec3 c0 = vec3(0.02, 0.02, 0.05);
+    vec3 c1 = vec3(0.65, 0.06, 0.06);
+    vec3 c2 = vec3(0.95, 0.55, 0.05);
+    vec3 c3 = vec3(0.98, 0.92, 0.35);
+    vec3 c4 = vec3(1.00, 1.00, 0.92);
+    if (t < 0.333) return mix(c0, c1, t / 0.333);
+    if (t < 0.666) return mix(c1, c2, (t - 0.333) / 0.333);
+    if (t < 0.85)  return mix(c2, c3, (t - 0.666) / (0.85 - 0.666));
+    return mix(c3, c4, (t - 0.85) / (1.0 - 0.85));
+}
+
 void main() {
     if (uFlatColorMode) { FragColor = vec4(uFlatColor, 1.0); return; }
 
@@ -63,10 +80,9 @@ void main() {
     vec3 H = normalize(L + V);
 
     vec3 base = uBaseColor;
-    if (uUseCurvatureColor) {
-        float m = max(uScalarAbsMax, 1e-6);
-        base = divergingColormap(vScalar / m);
-    }
+    float m = max(uScalarAbsMax, 1e-6);
+    if (uColorMode == 1) base = divergingColormap(vScalar / m);
+    else if (uColorMode == 2) base = heatmapColormap(abs(vScalar) / m);
 
     float ambient = 0.25;
     float diff = max(dot(N, L), 0.0);
