@@ -1,0 +1,43 @@
+# Build output
+build/
+build-*/
+out/
+cmake-build-*/
+
+# Vendored dependencies fetched per CMakeLists.txt instructions, not committed
+external/
+
+# CMake / FetchContent cache and generated files anywhere in the tree
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+_deps/
+Testing/
+CTestTestfile.cmake
+
+# Compiled objects and binaries
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+manifold_graph
+expr_test
+diffgeo_test
+builtin_demos_test
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
