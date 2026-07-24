@@ -41,3 +41,7 @@ builtin_demos_test
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# ImGui's own runtime window-layout state, written next to the working
+# directory the app is launched from -- not something to version.
+imgui.ini

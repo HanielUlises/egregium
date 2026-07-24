@@ -132,7 +132,17 @@ void drawAddSurfaceDialog(scene::Scene& sc, UIState& state) {
             ImGui::Checkbox("periodic in u", &state.draft.periodicU);
             ImGui::SameLine();
             ImGui::Checkbox("periodic in v", &state.draft.periodicV);
+            ImGui::Checkbox("twisted wrap in u (v -> -v at the seam)", &state.draft.periodicUTwistV);
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("For half-angle immersions like the Klein bottle, where going around\n"
+                                   "u by a full period reconnects at a REFLECTED v instead of the same v.\n"
+                                   "Requires periodic in v; overrides periodic in u.");
             ImGui::Checkbox("color by curvature", &state.draft.colorByCurvature);
+            if (state.draft.colorByCurvature) {
+                const char* styles[2] = {"Diverging (sign)", "Heatmap (magnitude)"};
+                int styleIdx = state.draft.curvatureHeatmap ? 1 : 0;
+                if (ImGui::Combo("Colormap", &styleIdx, styles, 2)) state.draft.curvatureHeatmap = (styleIdx == 1);
+            }
             break;
         case geo::SurfaceKind::Implicit:
             ImGui::InputText("F(x,y,z)  [=0]", &state.draft.implicitFormula);
@@ -157,6 +167,11 @@ void drawAddSurfaceDialog(scene::Scene& sc, UIState& state) {
             ImGui::SameLine();
             ImGui::Checkbox("periodic in v", &state.draft.periodicV);
             ImGui::Checkbox("color by curvature", &state.draft.colorByCurvature);
+            if (state.draft.colorByCurvature) {
+                const char* styles[2] = {"Diverging (sign)", "Heatmap (magnitude)"};
+                int styleIdx = state.draft.curvatureHeatmap ? 1 : 0;
+                if (ImGui::Combo("Colormap", &styleIdx, styles, 2)) state.draft.curvatureHeatmap = (styleIdx == 1);
+            }
             break;
     }
 
@@ -235,6 +250,11 @@ void drawOutlinerAndInspector(scene::Scene& sc, UIState& state) {
         if (obj.kind != geo::SurfaceKind::Implicit) {
             ImGui::Checkbox("Wireframe", &obj.wireframe);
             ImGui::Checkbox("Color by curvature", &obj.colorByCurvature);
+            if (obj.colorByCurvature) {
+                const char* styles[2] = {"Diverging (sign: blue = negative, red = positive)", "Heatmap (magnitude: black -> red -> yellow -> white)"};
+                int styleIdx = obj.curvatureHeatmap ? 1 : 0;
+                if (ImGui::Combo("Colormap", &styleIdx, styles, 2)) obj.curvatureHeatmap = (styleIdx == 1);
+            }
 
             if (obj.diffGeo) {
                 ImGui::Separator();

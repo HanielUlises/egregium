@@ -114,7 +114,7 @@ target_compile_options(mathgraph_core PRIVATE -Wall -Wextra)
 # ---- tests (pure-math, no GL/window deps) -----------------------------------
 enable_testing()
 foreach(t expr_test diffgeo_test builtin_demos_test)
-  add_executable(${t} tests/${t}.cpp)
+  add_executable(${t} src/tests/${t}.cpp)
   target_link_libraries(${t} PRIVATE mathgraph_core)
   target_include_directories(${t} PRIVATE src)
   add_test(NAME ${t} COMMAND ${t})
