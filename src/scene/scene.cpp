@@ -46,6 +46,7 @@ SceneObject& Scene::addFromBuildResult(const std::string& name, const geo::Surfa
         obj.implicitShader = gl::Shader::fromSource(gl::shaders::kImplicitVert, fragSrc);
     } else {
         obj.colorByCurvature = formulas.colorByCurvature;
+        obj.curvatureHeatmap = formulas.curvatureHeatmap;
         obj.gpuMesh = gl::GPUMesh::upload(built.mesh);
         obj.scalarAbsMax = std::max({std::fabs(built.mesh.scalarMin), std::fabs(built.mesh.scalarMax), 1e-6});
         obj.diffGeo = std::move(built.diffGeo);
@@ -95,7 +96,8 @@ void Scene::render(const gl::Camera& cam, float aspect) const {
     for (auto& obj : objects_) {
         if (!obj.visible || obj.kind == geo::SurfaceKind::Implicit) continue;
         meshShader_.setVec3("uBaseColor", obj.baseColor);
-        meshShader_.setInt("uUseCurvatureColor", obj.colorByCurvature ? 1 : 0);
+        int colorMode = !obj.colorByCurvature ? 0 : (obj.curvatureHeatmap ? 2 : 1);
+        meshShader_.setInt("uColorMode", colorMode);
         meshShader_.setFloat("uScalarAbsMax", static_cast<float>(obj.scalarAbsMax));
         obj.gpuMesh.draw();
     }

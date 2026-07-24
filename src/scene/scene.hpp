@@ -21,6 +21,7 @@ public:
                                      geo::BuildResult&& built, glm::vec3 color);
 
     void remove(size_t index);
+    void clear() { objects_.clear(); }
     std::vector<SceneObject>& objects() { return objects_; }
     const std::vector<SceneObject>& objects() const { return objects_; }
 

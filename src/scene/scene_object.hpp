@@ -26,6 +26,7 @@ struct SceneObject {
     // mesh-type objects (Explicit/Parametric/Metric)
     bool wireframe = false;
     bool colorByCurvature = false;
+    bool curvatureHeatmap = false; // when colorByCurvature: sequential heatmap of |K| instead of the diverging signed map
     std::optional<geo::DiffGeoSurface> diffGeo; // present for Explicit/Parametric/Metric; used for geodesic shooting
     gl::GPUMesh gpuMesh;
     double scalarAbsMax = 1.0; // for colormap normalization (max(|min|,|max|) of the mesh's curvature range)
